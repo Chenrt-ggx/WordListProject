@@ -50,7 +50,7 @@ inline void conflict_check()
     int sum = flag_n + flag_w + flag_m + flag_c;
     if (sum == 0)
     {
-        throw E_FLAG_NOT_EXISTS;
+        throw E_FLAG_NOT_EXIST;
     }
     if (sum > 1)
     {
@@ -64,6 +64,9 @@ inline void conflict_check()
     {
         throw E_FLAG_CONFLICT;
     }
+    if (filename == nullptr) {
+        throw E_FILENAME_NOT_PROVID;
+    }
 }
 
 inline void parse_params(int argc, char* argv[]) 
@@ -75,12 +78,16 @@ inline void parse_params(int argc, char* argv[])
         {
             if (filename != nullptr)
             {
-                throw E_FLAG_CONFLICT;
+                throw E_FILENAME_DUPLICATE;
             }
             filename = arg;
         }
         else if (arg[0] == '-')
         {
+            if (arg[2] != '\0')
+            {
+                throw E_FLAG_UNDEFINE;
+            }
             char flag = arg[1]; // \0 is also solved
             switch (flag)
             {
@@ -100,7 +107,7 @@ inline void parse_params(int argc, char* argv[])
                 flag_h = true;
                 if (++i >= argc)
                 {
-                    throw E_FLAG_PARAM_NOT_EXISTS;
+                    throw E_FLAG_PARAM_NOT_EXIST;
                 }
                 parse_alpha(argv[i], param_h);
                 break;
@@ -108,7 +115,7 @@ inline void parse_params(int argc, char* argv[])
                 flag_t = true;
                 if (++i >= argc)
                 {
-                    throw E_FLAG_PARAM_NOT_EXISTS;
+                    throw E_FLAG_PARAM_NOT_EXIST;
                 }
                 parse_alpha(argv[i], param_t);
                 break;
@@ -117,12 +124,12 @@ inline void parse_params(int argc, char* argv[])
                 set_flag(flag_r);
                 break;
             default:
-                throw E_FLAG_NOT_DEFINED;
+                throw E_FLAG_UNDEFINE;
             }
         }
         else
         {
-            throw E_FLAG_NOT_DEFINED;
+            throw E_FLAG_UNDEFINE;
         }
     }
 }
