@@ -1,20 +1,119 @@
-﻿// src.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
-//
+﻿#include <cstdio>
+#include <cstring>
+#include <cctype>
+#include "global.h"
 
-#include <iostream>
+bool flag_n = false;
+bool flag_w = false;
+bool flag_m = false;
+bool flag_c = false;
+bool flag_h = false;
+bool flag_t = false;
+bool flag_r = false;
 
-int main()
+char param_h;
+char param_t;
+
+char* filename = nullptr;
+
+inline bool is_txt(char* s)
 {
-    std::cout << "Hello World!\n";
+    int len = strlen(s);
+    if (len < 4)
+    {
+        return false;
+    }
+    else
+    {
+        return strstr(s + len - 4, ".txt") != nullptr;
+    }
 }
 
-// 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单
-// 调试程序: F5 或调试 >“开始调试”菜单
+inline int parse_alpha(char* s)
+{
+    if (strlen(argv[i]) == 1)
+    {
+        char c = *(argv[i]);
+        if (isalpha(c))
+        {
+            param_h = tolower(c);
+        }
+        else
+        {
+            return E_FLAG_PARAM_FORMAT_ERROR;
+        }
+    }
+    else
+    {
+        return E_FLAG_PARAM_FORMAT_ERROR;
+    }
+}
 
-// 入门使用技巧: 
-//   1. 使用解决方案资源管理器窗口添加/管理文件
-//   2. 使用团队资源管理器窗口连接到源代码管理
-//   3. 使用输出窗口查看生成输出和其他消息
-//   4. 使用错误列表窗口查看错误
-//   5. 转到“项目”>“添加新项”以创建新的代码文件，或转到“项目”>“添加现有项”以将现有代码文件添加到项目
-//   6. 将来，若要再次打开此项目，请转到“文件”>“打开”>“项目”并选择 .sln 文件
+inline int parse_params(int argc, char* argv[]) 
+{
+    for (int i = 1; i < argc; i++)
+    {
+        char* arg = argv[i];
+        if (is_txt(arg)) 
+        {
+            if (filename != nullptr)
+            {
+                return E_FLAG_CONFLICT;
+            }
+            filename = arg;
+        }
+        else if (arg[0] == '-')
+        {
+            char flag = arg[1]; // \0 is also solved
+            switch (flag)
+            {
+            case 'n':
+                flag_n = true;
+                break;
+            case 'w':
+                flag_w = true;
+                break;
+            case 'm':
+                flag_m = true;
+                break;
+            case 'c':
+                flag_c = true;
+                break;
+            case 'h':
+                flag_h = true;
+                ++i;
+                if (i < argc)
+                {
+
+                }
+                else
+                {
+                    return E_FLAG_PARAM_NOT_EXISTS;
+                }
+                break;
+            case 't':
+                flag_t = true;
+
+                break;
+            case 'r':
+                flag_r = true;
+                break;
+            default:
+                return E_FLAG_NOT_DEFINED;
+            }
+        }
+        else
+        {
+            return E_FLAG_NOT_DEFINED;
+        }
+    }
+}
+
+int main(int argc, char* argv[])
+{
+    
+
+    
+
+}
+
