@@ -7,7 +7,7 @@ constexpr int E_FLAG_NOT_EXIST = 3;
 constexpr int E_FLAG_PARAM_FORMAT_ERROR = 4;
 constexpr int E_FLAG_PARAM_NOT_EXIST = 5;
 
-constexpr int E_FILENAME_NOT_PROVID = 6;
+constexpr int E_FILENAME_NOT_PROVIDE = 6;
 constexpr int E_FILENAME_DUPLICATE = 7;
 constexpr int E_FILE_NOT_EXIST = 8;
 constexpr int E_FILE_UNABLE_TO_OPEN = 9;
