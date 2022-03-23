@@ -65,7 +65,7 @@ inline void conflict_check()
         throw E_FLAG_CONFLICT;
     }
     if (filename == nullptr) {
-        throw E_FILENAME_NOT_PROVID;
+        throw E_FILENAME_NOT_PROVIDE;
     }
 }
 
@@ -104,7 +104,7 @@ inline void parse_params(int argc, char* argv[])
                 set_flag(flag_c);
                 break;
             case 'h':
-                flag_h = true;
+                set_flag(flag_h);
                 if (++i >= argc)
                 {
                     throw E_FLAG_PARAM_NOT_EXIST;
@@ -112,7 +112,7 @@ inline void parse_params(int argc, char* argv[])
                 parse_alpha(argv[i], param_h);
                 break;
             case 't':
-                flag_t = true;
+                set_flag(flag_t);
                 if (++i >= argc)
                 {
                     throw E_FLAG_PARAM_NOT_EXIST;
@@ -120,7 +120,6 @@ inline void parse_params(int argc, char* argv[])
                 parse_alpha(argv[i], param_t);
                 break;
             case 'r':
-                flag_r = true;
                 set_flag(flag_r);
                 break;
             default:
