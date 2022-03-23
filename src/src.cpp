@@ -1,6 +1,7 @@
 ﻿#include <cstdio>
-#include <cstring>
 #include <cctype>
+#include <cstring>
+#include <cstdlib>
 #include "global.h"
 
 bool flag_n = false;
@@ -19,37 +20,53 @@ char* filename = nullptr;
 inline bool is_txt(char* s)
 {
     int len = strlen(s);
-    if (len < 4)
-    {
-        return false;
-    }
-    else
-    {
-        return strstr(s + len - 4, ".txt") != nullptr;
-    }
+    return len >= 4 && strstr(s + len - 4, ".txt") != nullptr;
 }
 
-inline int parse_alpha(char* s)
+inline void set_flag(bool& flag)
 {
-    if (strlen(argv[i]) == 1)
+    if (flag)
     {
-        char c = *(argv[i]);
-        if (isalpha(c))
-        {
-            param_h = tolower(c);
-        }
-        else
-        {
-            return E_FLAG_PARAM_FORMAT_ERROR;
-        }
+        throw E_FLAG_CONFLICT;
     }
-    else
+    flag = true;
+}
+
+inline void parse_alpha(char* s, char& param)
+{
+    if (strlen(s) != 1)
     {
-        return E_FLAG_PARAM_FORMAT_ERROR;
+        throw E_FLAG_PARAM_FORMAT_ERROR;
+    }
+    if (!isalpha(*s))
+    {
+        throw E_FLAG_PARAM_FORMAT_ERROR;
+    }
+    param = tolower(*s);
+}
+
+inline void conflict_check()
+{
+    int sum = flag_n + flag_w + flag_m + flag_c;
+    if (sum == 0)
+    {
+        throw E_FLAG_NOT_EXISTS;
+    }
+    if (sum > 1)
+    {
+        throw E_FLAG_CONFLICT;
+    }
+    if (flag_n && (flag_h || flag_t || flag_r))
+    {
+        throw E_FLAG_CONFLICT;
+    }
+    if (flag_m && (flag_h || flag_t || flag_r))
+    {
+        throw E_FLAG_CONFLICT;
     }
 }
 
-inline int parse_params(int argc, char* argv[]) 
+inline void parse_params(int argc, char* argv[]) 
 {
     for (int i = 1; i < argc; i++)
     {
@@ -58,7 +75,7 @@ inline int parse_params(int argc, char* argv[])
         {
             if (filename != nullptr)
             {
-                return E_FLAG_CONFLICT;
+                throw E_FLAG_CONFLICT;
             }
             filename = arg;
         }
@@ -68,52 +85,65 @@ inline int parse_params(int argc, char* argv[])
             switch (flag)
             {
             case 'n':
-                flag_n = true;
+                set_flag(flag_n);
                 break;
             case 'w':
-                flag_w = true;
+                set_flag(flag_w);
                 break;
             case 'm':
-                flag_m = true;
+                set_flag(flag_m);
                 break;
             case 'c':
-                flag_c = true;
+                set_flag(flag_c);
                 break;
             case 'h':
                 flag_h = true;
-                ++i;
-                if (i < argc)
+                if (++i >= argc)
                 {
-
+                    throw E_FLAG_PARAM_NOT_EXISTS;
                 }
-                else
-                {
-                    return E_FLAG_PARAM_NOT_EXISTS;
-                }
+                parse_alpha(argv[i], param_h);
                 break;
             case 't':
                 flag_t = true;
-
+                if (++i >= argc)
+                {
+                    throw E_FLAG_PARAM_NOT_EXISTS;
+                }
+                parse_alpha(argv[i], param_t);
                 break;
             case 'r':
                 flag_r = true;
+                set_flag(flag_r);
                 break;
             default:
-                return E_FLAG_NOT_DEFINED;
+                throw E_FLAG_NOT_DEFINED;
             }
         }
         else
         {
-            return E_FLAG_NOT_DEFINED;
+            throw E_FLAG_NOT_DEFINED;
         }
     }
 }
 
 int main(int argc, char* argv[])
 {
-    
-
-    
-
+    try
+    {
+        parse_params(argc, argv);
+        conflict_check();
+        printf("flag_n : %d\n", flag_n);
+        printf("flag_w : %d\n", flag_w);
+        printf("flag_m : %d\n", flag_m);
+        printf("flag_c : %d\n", flag_c);
+        printf("flag_h : %d\n", flag_h);
+        printf("flag_t : %d\n", flag_t);
+        printf("flag_r : %d\n", flag_r);
+    }
+    catch (int e)
+    {
+        printf("error : %d\n", e);
+    }
+    return 0;
 }
-
