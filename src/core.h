@@ -1,9 +1,13 @@
 #pragma once
 
-int gen_chain_word(char* words[], int len, char* result[], char head, char tail, bool enable_loop);
+#include <vector>
 
-int gen_chains_all(char* words[], int len, char* result[]);
+using namespace std;
 
-int gen_chain_word_unique(char* words[], int len, char* result[]);
+vector<char*> gen_chain_word(vector<char*> words, char head, char tail, bool enable_loop);
 
-int gen_chain_char(char* words[], int len, char* result[], char head, char tail, bool enable_loop);
+vector<char*> gen_chains_all(vector<char*> words);
+
+vector<char*> gen_chain_word_unique(vector<char*> words);
+
+vector<char*> gen_chain_char(vector<char*> words, char head, char tail, bool enable_loop);

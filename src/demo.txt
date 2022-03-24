@@ -1,4 +1,4 @@
-﻿#include <cstdio>
+#include <cstdio>
 #include <cctype>
 #include <cstring>
 #include <cstdlib>
@@ -266,3 +266,5 @@ int main(int argc, char* argv[])
     }
     return 0;
 }
+
+aaa aca aba aea ada
