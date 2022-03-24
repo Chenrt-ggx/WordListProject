@@ -2,6 +2,8 @@
 #include <cctype>
 #include <cstring>
 #include <cstdlib>
+
+#include "core.h"
 #include "global.h"
 
 bool flag_n = false;
@@ -133,12 +135,45 @@ inline void parse_params(int argc, char* argv[])
     }
 }
 
+inline void read_file(char*& content, long& len)
+{
+    FILE* file;
+    if (fopen_s(&file, filename, "rb") || file == nullptr)
+    {
+        throw E_FILE_UNABLE_TO_OPEN;
+    }
+    fseek(file, 0, SEEK_END);
+    len = ftell(file);
+    fseek(file, 0, SEEK_SET);
+    content = (char*)malloc(len + 1);
+    if (content == nullptr)
+    {
+        throw E_MEMORY_ALLOC_FAIL;
+    }
+    int read = fread(content, 1, len + 1, file);
+    if (read != len)
+    {
+        throw E_FILE_UNABLE_TO_OPEN;
+    }
+    content[read] = 0;
+    fclose(file);
+}
+
+inline void call_core()
+{
+    long len;
+    char* content;
+    read_file(content, len);
+}
+
 int main(int argc, char* argv[])
 {
     try
     {
         parse_params(argc, argv);
         conflict_check();
+        call_core();
+        /*
         printf("flag_n : %d\n", flag_n);
         printf("flag_w : %d\n", flag_w);
         printf("flag_m : %d\n", flag_m);
@@ -146,6 +181,7 @@ int main(int argc, char* argv[])
         printf("flag_h : %d\n", flag_h);
         printf("flag_t : %d\n", flag_t);
         printf("flag_r : %d\n", flag_r);
+        */
     }
     catch (int e)
     {
