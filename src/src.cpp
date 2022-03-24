@@ -2,9 +2,12 @@
 #include <cctype>
 #include <cstring>
 #include <cstdlib>
+#include <vector>
 
 #include "core.h"
 #include "global.h"
+
+using namespace std;
 
 bool flag_n = false;
 bool flag_w = false;
@@ -21,7 +24,7 @@ char* filename = nullptr;
 
 inline bool is_txt(char* s)
 {
-    int len = strlen(s);
+    size_t len = strlen(s);
     return len >= 4 && strstr(s + len - 4, ".txt") != nullptr;
 }
 
@@ -145,12 +148,12 @@ inline void read_file(char*& content, long& len)
     fseek(file, 0, SEEK_END);
     len = ftell(file);
     fseek(file, 0, SEEK_SET);
-    content = (char*)malloc(len + 1);
+    content = (char*)malloc(static_cast<size_t>(len) + 1);
     if (content == nullptr)
     {
         throw E_MEMORY_ALLOC_FAIL;
     }
-    int read = fread(content, 1, len + 1, file);
+    size_t read = fread(content, 1, static_cast<size_t>(len) + 1, file);
     if (read != len)
     {
         throw E_FILE_UNABLE_TO_OPEN;
@@ -159,11 +162,39 @@ inline void read_file(char*& content, long& len)
     fclose(file);
 }
 
+inline vector<char*> split_content(char* content, int len)
+{
+    vector<char*> words;
+    for (char* c = content; *c != '\0'; c++)
+    {
+        if ('A' <= *c && *c <= 'Z')
+        {
+            *c = *c + 32;
+        }
+        else if (*c < 'a' || *c > 'z')
+        { 
+            *c = '\0';
+        }
+    }
+    for (int i = 0; i < len; i++)
+    {
+        if (content[i] != '\0' && content[i + 1] != '\0')
+        {
+            words.push_back(content + i);
+            while (content[i] != '\0')
+            {
+                i++;
+            }
+        }
+    }
+}
+
 inline void call_core()
 {
     long len;
     char* content;
     read_file(content, len);
+    char** words;
 }
 
 int main(int argc, char* argv[])
