@@ -17,8 +17,8 @@ bool flag_h = false;
 bool flag_t = false;
 bool flag_r = false;
 
-char param_h;
-char param_t;
+char param_h = '\0';
+char param_t = '\0';
 
 char* filename = nullptr;
 
@@ -162,9 +162,8 @@ inline void read_file(char*& content, long& len)
     fclose(file);
 }
 
-inline vector<char*> split_content(char* content, int len)
+int split_content(char* content, int len, char* result[]) 
 {
-    vector<char*> words;
     for (char* c = content; *c != '\0'; c++)
     {
         if ('A' <= *c && *c <= 'Z')
@@ -176,40 +175,41 @@ inline vector<char*> split_content(char* content, int len)
             *c = '\0';
         }
     }
+    int count = 0;
     for (int i = 0; i < len; i++)
     {
         if (content[i] != '\0' && content[i + 1] != '\0')
         {
-            words.push_back(content + i);
+            result[count++] = content + i;
             while (content[i] != '\0')
             {
                 i++;
             }
         }
     }
-    return words;
+    return count;
 }
 
-inline void write_to_screen(const vector<char*>& result)
+inline void write_to_screen(char *result[], int len)
 {
-    printf("%d\n", (int)result.size());
-    for (char* i : result)
+    printf("%d\n", len);
+    for (int i = 0; i < len; i++)
     {
-        puts(i);
+        puts(result[i]);
     }
 }
 
-inline void write_to_solution(const vector<char*>& result)
+inline void write_to_solution(char *result[], int len)
 {
     FILE* file;
     if (fopen_s(&file, "solution.txt", "w") || file == nullptr)
     {
         throw E_FILE_UNABLE_TO_OPEN;
     }
-    fprintf(file, "%d\n", (int)result.size());
-    for (char* i : result)
+    fprintf(file, "%d\n", len);
+    for (int i = 0; i < len; i++)
     {
-        fputs(i, file);
+        fputs(result[i], file);
     }
     fclose(file);
 }
@@ -219,27 +219,28 @@ inline void call_core()
     long len;
     char* content;
     read_file(content, len);
-    vector<char*> words = split_content(content, len);
-    vector<char*> result;
+    static char* words[10000];
+    static char* result[20000];
+    int word_count = split_content(content, len, words);
     if (flag_n)
     {
-        result = gen_chains_all(words);
-        write_to_screen(result);
+        int result_len = gen_chains_all(words, len, result);
+        write_to_screen(result, result_len);
     }
     else if (flag_w)
     {
-        result = gen_chain_word(words, param_h, param_t, flag_r);
-        write_to_solution(result);
+        int result_len = gen_chain_word(words, word_count, result, param_h, param_t, flag_r);
+        write_to_solution(result, result_len);
     }
     else if (flag_m)
     {
-        result = gen_chain_word_unique(words);
-        write_to_solution(result);
+        int result_len = gen_chain_word_unique(words, word_count, result);
+        write_to_solution(result, result_len);
     }
     else if (flag_c)
     {
-        result = gen_chain_char(words, param_h, param_t, flag_r);
-        write_to_solution(result);
+        int result_len = gen_chain_char(words, word_count, result, param_h, param_t, flag_r);
+        write_to_solution(result, result_len);
     }
 }
 

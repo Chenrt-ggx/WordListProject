@@ -8,12 +8,20 @@
 
 using namespace std;
 
+constexpr int WHITE = 0;
+constexpr int GRAY = 1;
+constexpr int BLACK = 2;
+
 struct Node
 {
 	int len;
 	char* word;
+	char last;
+	int status;
 
-	Node(int len, char* word) : len(len), word(word) {};
+	Node(int len, char* word) : len(len), word(word), status(0) {
+		last = word[len - 1];
+	};
 
 	bool operator==(Node& rhs) const
 	{
@@ -49,12 +57,26 @@ struct Node
 
 vector<Node> graph[26][26];
 
-static void build(vector<char*> words, bool enable_loop)
+static void reset_graph()
 {
-	for (char* i : words)
+	for (int i = 0; i < 26; i++)
 	{
-		int len = (int)strlen(i);
-		graph[i[0] - 'a'][i[len - 1] - 'a'].emplace_back(len, i);
+		for (int j = 0; j < 26; j++)
+		{
+			for (Node& node : graph[i][j]) {
+				node.status = WHITE;
+			}
+		}
+	}
+}
+
+static void build(char* words[], int word_count, bool enable_loop)
+{
+	for (int i = 0; i < word_count; i++)
+	{
+		char *word = words[i];
+		int len = (int)strlen(word);
+		graph[word[0] - 'a'][word[len - 1] - 'a'].emplace_back(len, word);
 	}
 	for (int i = 0; i < 26; i++)
 	{
@@ -63,6 +85,7 @@ static void build(vector<char*> words, bool enable_loop)
 			sort(graph[i][j].begin(), graph[i][j].end());
 			if (enable_loop)
 			{
+				// check_loop and remove_duplicates are of xor relations.
 				graph[i][j].erase(unique(graph[i][j].begin(), graph[i][j].end()), graph[i][j].end());
 			}
 		}
@@ -79,19 +102,11 @@ static void build(vector<char*> words, bool enable_loop)
 	//		puts("");
 	//	}
 	//}
-	if (!enable_loop)
-	{
-		check_cycle();
-	}
 }
-
-constexpr int WHITE = 0;
-constexpr int GRAY = 1;
-constexpr int BLACK = 2;
 
 int status[26];
 
-bool check_dfs(int parent)
+bool check_cycle_dfs(int parent)
 {
 	for (int i = 0; i < 26; i++)
 	{
@@ -104,7 +119,7 @@ bool check_dfs(int parent)
 			if (status[i] == WHITE)
 			{
 				status[i] = GRAY;
-				if (check_dfs(i))
+				if (check_cycle_dfs(i))
 				{
 					return true;
 				}
@@ -119,44 +134,103 @@ bool check_dfs(int parent)
 	return false;
 }
 
-void check_cycle() 
+bool check_cycle() 
 {
 	memset(status, 0, sizeof(status));
 	for (int i = 0; i < 26; i++)
 	{
 
-		if (status[i] == WHITE && check_dfs(i))
+		if (status[i] == WHITE && check_cycle_dfs(i))
 		{
-			throw E_WORD_CYCLE_EXIST;
+			return true;
 		}
 		if (graph[i][i].size() > 1)
 		{
-			throw E_WORD_CYCLE_EXIST;
+			return true;
 		}
 	}
+	return false;
 	
 }
 
-vector<char*> gen_chain_word(vector<char*> words, char head, char tail, bool enable_loop)
+int gen_chain_word(char* words[], int len, char* result[], char head, char tail, bool enable_loop)
 {
-	build(words, enable_loop);
-	return vector<char*>(1);
+	build(words, len, enable_loop);
+	if (!enable_loop && check_cycle())
+	{
+		throw E_WORD_CYCLE_EXIST;
+	}
+	return 0;
 }
 
-vector<char*> gen_chains_all(vector<char*> words)
+void chains_all_dfs(int now, // status (character)
+	string& chain,
+	int chain_word_size, 
+	char* result[], 
+	int& count)
 {
-	build(words, false);
-	return vector<char*>(1);
+	Node* self_circle = nullptr;
+	if (graph[now][now].size() == 1)
+	{
+		// there is a self circle
+		self_circle = &graph[now][now].at(0);
+	}
+
+	for (int target = 0; target < 26; target++)
+	{
+		if (now == target)
+		{
+			continue;
+		}
+		else
+		{
+		vector<Node>& nodes = graph[now][target];
+			for (auto& node : nodes)
+			{
+				chain[chain_char_size+1] = ' ';
+				strcpy(chain + 1 + chain_char_size, node.word);
+				chains_all_dfs(node.last, chain, chain_char_size + node.len + 1, wor)
+				
+				chain[chain_char_size] = 0;
+			}
+		}
+	}
+
 }
 
-vector<char*> gen_chain_word_unique(vector<char*> words)
+int gen_chains_all(char* words[], int len, char* result[])
 {
-	build(words, false);
-	return vector<char*>(1);
+	build(words, len, false);
+	if (check_cycle()) 
+	{
+		throw E_WORD_CYCLE_EXIST;
+	}
+	int count = 0;
+	static char chain[20000] = {0};
+	// TODO 20000
+	for (int i = 0; i < 26; i++)
+	{
+		chains_all_dfs(i, chain, 0, 0, result, count);
+	}
+	return count;
 }
 
-vector<char*> gen_chain_char(vector<char*> words, char head, char tail, bool enable_loop)
+int gen_chain_word_unique(char* words[], int len, char* result[])
 {
-	build(words, enable_loop);
-	return vector<char*>(1);
+	build(words, len, false);
+	if (check_cycle())
+	{
+		throw E_WORD_CYCLE_EXIST;
+	}
+	return 0;
+}
+
+int gen_chain_char(char* words[], int len, char* result[], char head, char tail, bool enable_loop)
+{
+	build(words, len, enable_loop);
+	if (!enable_loop && check_cycle())
+	{
+		throw E_WORD_CYCLE_EXIST;
+	}
+	return 0;
 }

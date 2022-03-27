@@ -4,16 +4,16 @@
 
 using namespace std;
 
-vector<char*> gen_chain_word(vector<char*> words, char head, char tail, bool enable_loop);
+int gen_chain_word(char* words[], int len, char* result[], char head, char tail, bool enable_loop);
 
-vector<char*> gen_chains_all(vector<char*> words);
+int gen_chains_all(char* words[], int len, char* result[]);
 
-vector<char*> gen_chain_word_unique(vector<char*> words);
+int gen_chain_word_unique(char* words[], int len, char* result[]);
 
-vector<char*> gen_chain_char(vector<char*> words, char head, char tail, bool enable_loop);
+int gen_chain_char(char* words[], int len, char* result[], char head, char tail, bool enable_loop);
 
-static void build(vector<char*> words, bool enable_loop);
+static void build(char* words[], int word_count, bool enable_loop);
 
-void check_cycle();
+bool check_cycle();
 
-bool check_dfs(int parent);
+bool check_cycle_dfs(int parent);
