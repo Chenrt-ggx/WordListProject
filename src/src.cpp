@@ -210,6 +210,7 @@ inline void write_to_solution(char *result[], int len)
     for (int i = 0; i < len; i++)
     {
         fputs(result[i], file);
+        fputc('\n', file);
     }
     fclose(file);
 }

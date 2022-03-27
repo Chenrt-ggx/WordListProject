@@ -16,11 +16,9 @@ struct Node
 {
 	int len;
 	char* word;
-	char last;
 	int status;
 
 	Node(int len, char* word) : len(len), word(word), status(0) {
-		last = word[len - 1];
 	};
 
 	bool operator==(Node& rhs) const
@@ -163,7 +161,7 @@ int gen_chain_word(char* words[], int len, char* result[], char head, char tail,
 	return 0;
 }
 
-void chains_all_dfs(int now, vector<char*>& chain, vector<char*> chains[], int& count)
+inline void __output(vector<char*>& chain, vector<char*> chains[], int& count) 
 {
 	if (chain.size() > 1)
 	{
@@ -173,10 +171,15 @@ void chains_all_dfs(int now, vector<char*>& chain, vector<char*> chains[], int& 
 		}
 		++count;
 	}
+}
+
+void chains_all_dfs(int now, vector<char*>& chain, vector<char*> chains[], int& count)
+{
 	Node* self_circle = nullptr;
 	if (graph[now][now].size() == 1)
 	{
 		// there is a self circle
+		printf("sure");
 		self_circle = &graph[now][now].at(0);
 	}
 	for (int target = 0; target < 26; target++)
@@ -185,22 +188,23 @@ void chains_all_dfs(int now, vector<char*>& chain, vector<char*> chains[], int& 
 		{
 			continue;
 		}
-		else
+		vector<Node>& nodes = graph[now][target];
+		for (auto& node : nodes)
 		{
-			vector<Node>& nodes = graph[now][target];
-			for (auto& node : nodes)
+			chain.push_back(node.word);
+			__output(chain, chains, count);
+			chains_all_dfs(target, chain, chains, count);
+			chain.pop_back();
+			if (self_circle != nullptr)
 			{
+				chain.push_back(self_circle->word);
+				__output(chain, chains, count);
 				chain.push_back(node.word);
-				chains_all_dfs(node.last, chain, chains, count);
+				__output(chain, chains, count);
+				printf("yes");
+				chains_all_dfs(target, chain, chains, count);
 				chain.pop_back();
-				if (self_circle != nullptr)
-				{
-					chain.push_back(self_circle->word);
-					chain.push_back(node.word);
-					chains_all_dfs(node.last, chain, chains, count);
-					chain.pop_back();
-					chain.pop_back();
-				}
+				chain.pop_back();
 			}
 		}
 	}
@@ -248,6 +252,43 @@ int gen_chains_all(char* words[], int len, char* result[])
 	return count;
 }
 
+inline void __add_max_chain(vector<char*>& chain, vector<char*>& max_chain)
+{
+	if (chain.size() > 1)
+	{
+		if (chain.size() > max_chain.size()) {
+			max_chain = chain;
+		}
+	}
+}
+
+void __chain_word_unique_dfs(int now, vector<char*> &chain, vector<char*>& max_chain)
+{
+	for (int target = 0; target < 26; target++)
+	{
+		if (now == target) 
+		{
+			continue;
+		}
+		vector<Node>& nodes = graph[now][target];
+		for (auto& node : nodes)
+		{
+			chain.push_back(node.word);
+			__add_max_chain(chain, max_chain);
+			__chain_word_unique_dfs(target, chain, max_chain);
+			if (graph[target][target].size() > 0)
+			{
+				// the last word of a chain could be axxa
+				chain.push_back(graph[target][target].front().word);
+				__add_max_chain(chain, max_chain);
+				chain.pop_back();
+			}
+			chain.pop_back();
+			break;
+		}
+	}
+}
+
 int gen_chain_word_unique(char* words[], int len, char* result[])
 {
 	build(words, len, false);
@@ -255,7 +296,19 @@ int gen_chain_word_unique(char* words[], int len, char* result[])
 	{
 		throw E_WORD_CYCLE_EXIST;
 	}
-	return 0;
+	vector<char*> chain;
+	vector<char*> max_chain;
+	for (int i = 0; i < 26; i++)
+	{
+		__chain_word_unique_dfs(i, chain, max_chain);
+	}
+
+	for (int i = 0; i < max_chain.size(); i++)
+	{
+		result[i] = max_chain[i];
+	}
+
+	return max_chain.size();
 }
 
 int gen_chain_char(char* words[], int len, char* result[], char head, char tail, bool enable_loop)
