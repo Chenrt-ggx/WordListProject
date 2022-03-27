@@ -15,10 +15,12 @@ constexpr int BLACK = 2;
 struct Node
 {
 	int len;
-	char* word;
+	int end;
 	int status;
+	char* word;
 
 	Node(int len, char* word) : len(len), word(word), status(0) {
+		end = word[len - 1];
 	};
 
 	bool operator==(Node& rhs) const
@@ -151,6 +153,41 @@ bool check_cycle()
 	
 }
 
+inline void __add_max_chain(vector<char*>& chain, vector<char*>& max_chain)
+{
+	if (chain.size() > 1)
+	{
+		if (chain.size() > max_chain.size()) {
+			max_chain = chain;
+		}
+	}
+}
+
+void __chain_word_dfs(int now, vector<char*>& chain, vector<char*>& max_chain, char end)
+{
+	for (int target = 0; target < 26; target++)
+	{
+		vector<Node>& nodes = graph[now][target];
+		for (auto& node : nodes)
+		{
+			if (node.status)
+			{
+				continue;
+			}
+			node.status = 1;
+			chain.push_back(node.word);
+			if (end < 'a' || end > 'z' || node.end == end)
+			{
+				__add_max_chain(chain, max_chain);
+			}
+			__chain_word_dfs(target, chain, max_chain, end);
+			chain.pop_back();
+			node.status = 0;
+			break;
+		}
+	}
+}
+
 int gen_chain_word(char* words[], int len, char* result[], char head, char tail, bool enable_loop)
 {
 	build(words, len, enable_loop);
@@ -158,7 +195,25 @@ int gen_chain_word(char* words[], int len, char* result[], char head, char tail,
 	{
 		throw E_WORD_CYCLE_EXIST;
 	}
-	return 0;
+	vector<char*> chain;
+	vector<char*> max_chain;
+	if ('a' <= head && head <= 'z')
+	{
+		__chain_word_dfs(head - 'a', chain, max_chain, tail);
+	}
+	else
+	{
+		for (int i = 0; i < 26; i++)
+		{
+			__chain_word_dfs(i, chain, max_chain, tail);
+		}
+	}
+	for (int i = 0; i < max_chain.size(); i++)
+	{
+		result[i] = max_chain[i];
+	}
+
+	return (int)max_chain.size();
 }
 
 inline void __output(vector<char*>& chain, vector<char*> chains[], int& count) 
@@ -179,7 +234,6 @@ void chains_all_dfs(int now, vector<char*>& chain, vector<char*> chains[], int& 
 	if (graph[now][now].size() == 1)
 	{
 		// there is a self circle
-		printf("sure");
 		self_circle = &graph[now][now].at(0);
 	}
 	for (int target = 0; target < 26; target++)
@@ -201,7 +255,6 @@ void chains_all_dfs(int now, vector<char*>& chain, vector<char*> chains[], int& 
 				__output(chain, chains, count);
 				chain.push_back(node.word);
 				__output(chain, chains, count);
-				printf("yes");
 				chains_all_dfs(target, chain, chains, count);
 				chain.pop_back();
 				chain.pop_back();
@@ -252,16 +305,6 @@ int gen_chains_all(char* words[], int len, char* result[])
 	return count;
 }
 
-inline void __add_max_chain(vector<char*>& chain, vector<char*>& max_chain)
-{
-	if (chain.size() > 1)
-	{
-		if (chain.size() > max_chain.size()) {
-			max_chain = chain;
-		}
-	}
-}
-
 void __chain_word_unique_dfs(int now, vector<char*> &chain, vector<char*>& max_chain)
 {
 	for (int target = 0; target < 26; target++)
@@ -308,7 +351,7 @@ int gen_chain_word_unique(char* words[], int len, char* result[])
 		result[i] = max_chain[i];
 	}
 
-	return max_chain.size();
+	return (int)max_chain.size();
 }
 
 int gen_chain_char(char* words[], int len, char* result[], char head, char tail, bool enable_loop)
