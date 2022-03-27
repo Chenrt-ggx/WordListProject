@@ -224,7 +224,7 @@ inline void call_core()
     int word_count = split_content(content, len, words);
     if (flag_n)
     {
-        int result_len = gen_chains_all(words, len, result);
+        int result_len = gen_chains_all(words, word_count, result);
         write_to_screen(result, result_len);
     }
     else if (flag_w)

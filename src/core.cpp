@@ -74,7 +74,7 @@ static void build(char* words[], int word_count, bool enable_loop)
 {
 	for (int i = 0; i < word_count; i++)
 	{
-		char *word = words[i];
+		char* word = words[i];
 		int len = (int)strlen(word);
 		graph[word[0] - 'a'][word[len - 1] - 'a'].emplace_back(len, word);
 	}
@@ -163,19 +163,22 @@ int gen_chain_word(char* words[], int len, char* result[], char head, char tail,
 	return 0;
 }
 
-void chains_all_dfs(int now, // status (character)
-	string& chain,
-	int chain_word_size, 
-	char* result[], 
-	int& count)
+void chains_all_dfs(int now, vector<char*>& chain, vector<char*> chains[], int& count)
 {
+	if (chain.size() > 1)
+	{
+		if (count < MAX_RESULT_LENGTH)
+		{
+			chains[count] = chain;
+		}
+		++count;
+	}
 	Node* self_circle = nullptr;
 	if (graph[now][now].size() == 1)
 	{
 		// there is a self circle
 		self_circle = &graph[now][now].at(0);
 	}
-
 	for (int target = 0; target < 26; target++)
 	{
 		if (now == target)
@@ -184,18 +187,40 @@ void chains_all_dfs(int now, // status (character)
 		}
 		else
 		{
-		vector<Node>& nodes = graph[now][target];
+			vector<Node>& nodes = graph[now][target];
 			for (auto& node : nodes)
 			{
-				chain[chain_char_size+1] = ' ';
-				strcpy(chain + 1 + chain_char_size, node.word);
-				chains_all_dfs(node.last, chain, chain_char_size + node.len + 1, wor)
-				
-				chain[chain_char_size] = 0;
+				chain.push_back(node.word);
+				chains_all_dfs(node.last, chain, chains, count);
+				chain.pop_back();
+				if (self_circle != nullptr)
+				{
+					chain.push_back(self_circle->word);
+					chain.push_back(node.word);
+					chains_all_dfs(node.last, chain, chains, count);
+					chain.pop_back();
+					chain.pop_back();
+				}
 			}
 		}
 	}
+}
 
+inline char* to_string(const vector<char*>& chain)
+{
+	string str;
+	for (auto& i : chain)
+	{
+		str += i;
+		str += " ";
+	}
+	char* result = (char*)malloc(str.length() + 1);
+	if (result == nullptr)
+	{
+		throw E_MEMORY_ALLOC_FAIL;
+	}
+	strcpy_s(result, str.length() + 1, str.c_str());
+	return result;
 }
 
 int gen_chains_all(char* words[], int len, char* result[])
@@ -206,11 +231,19 @@ int gen_chains_all(char* words[], int len, char* result[])
 		throw E_WORD_CYCLE_EXIST;
 	}
 	int count = 0;
-	static char chain[20000] = {0};
-	// TODO 20000
+	vector<char*> chain;
+	static vector<char*> chains[20000];
 	for (int i = 0; i < 26; i++)
 	{
-		chains_all_dfs(i, chain, 0, 0, result, count);
+		chains_all_dfs(i, chain, chains, count);
+	}
+	if (count >= 20000)
+	{
+		return count;
+	}
+	for (int i = 0; i < count; i++)
+	{
+		result[i] = to_string(chains[i]);
 	}
 	return count;
 }

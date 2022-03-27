@@ -15,3 +15,4 @@ constexpr int E_MEMORY_ALLOC_FAIL = 10;
  
 constexpr int E_WORD_CYCLE_EXIST = 11;
 
+constexpr int MAX_RESULT_LENGTH = 20000;
