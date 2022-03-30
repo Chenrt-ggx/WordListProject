@@ -139,10 +139,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src.cpp" />
+    <ClCompile Include="utils.cpp" />
+    <ClCompile Include="word_list.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="global.h" />
+    <ClInclude Include="errors.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
