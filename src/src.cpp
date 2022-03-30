@@ -7,6 +7,12 @@
 #include "core.h"
 #include "global.h"
 
+#include "../core/core.h"
+#pragma comment(lib, "../x64/Debug/core.lib")
+
+_declspec(dllimport) int add(int a, int b);
+_declspec(dllimport) int mul(int a, int b);
+
 using namespace std;
 
 bool flag_n = false;
@@ -247,6 +253,7 @@ inline void call_core()
 
 int main(int argc, char* argv[])
 {
+    printf("%d %d", add(1, 2), mul(1, 2));
     try
     {
         parse_params(argc, argv);
