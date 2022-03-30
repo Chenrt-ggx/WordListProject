@@ -1,17 +1,21 @@
-﻿#include <cstdio>
+﻿#include "global.h"
+#include "../core/core.h"
+
+#include <cstdio>
 #include <cctype>
 #include <cstring>
 #include <cstdlib>
 #include <vector>
 
-#include "core.h"
-#include "global.h"
-
-#include "../core/core.h"
 #pragma comment(lib, "../x64/Debug/core.lib")
 
-_declspec(dllimport) int add(int a, int b);
-_declspec(dllimport) int mul(int a, int b);
+extern "C" _declspec(dllimport) int gen_chain_word(char* words[], int len, char* result[], char head, char tail, bool enable_loop);
+
+extern "C" _declspec(dllimport) int gen_chains_all(char* words[], int len, char* result[]);
+
+extern "C" _declspec(dllimport) int gen_chain_word_unique(char* words[], int len, char* result[]);
+
+extern "C" _declspec(dllimport) int gen_chain_char(char* words[], int len, char* result[], char head, char tail, bool enable_loop);
 
 using namespace std;
 
@@ -253,7 +257,6 @@ inline void call_core()
 
 int main(int argc, char* argv[])
 {
-    printf("%d %d", add(1, 2), mul(1, 2));
     try
     {
         parse_params(argc, argv);
