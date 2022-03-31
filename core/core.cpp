@@ -41,31 +41,31 @@ inline void build_graph(char* words[], const int word_count)
     }
 }
 
-bool check_cycle_dfs(const int parent)
+bool check_cycle_dfs(const int current)
 {
-    for (int i = 0; i < 26; i++)
+    status[current] = GRAY;
+    for (int next = 0; next < 26; next++)
     {
-        if (parent == i)
+        if (current == next)
         {
             continue;
         }
-        if (!graph[parent][i].empty())
+        if (!graph[current][next].empty())
         {
-            if (status[i] == WHITE)
-            {
-                status[i] = GRAY;
-                if (check_cycle_dfs(i))
-                {
-                    return true;
-                }
-                status[i] = BLACK;
-            }
-            else if (status[i] == GRAY)
+            if (status[next] == GRAY)
             {
                 return true;
             }
+            else if (status[next] == WHITE)
+            {
+                if (check_cycle_dfs(next))
+                {
+                    return true;
+                }
+            }
         }
     }
+    status[current] = BLACK;
     return false;
 }
 
