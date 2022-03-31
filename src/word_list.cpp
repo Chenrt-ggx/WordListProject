@@ -131,21 +131,37 @@ int main(int argc, char* argv[])
         if (flag_n)
         {
             int result_len = gen_chains_all(words, word_count, result);
+            if (result_len < 0)
+            {
+                throw result_len;
+            }
             write_to_screen(result, result_len);
         }
         else if (flag_w)
         {
             int result_len = gen_chain_word(words, word_count, result, param_h, param_t, flag_r);
+            if (result_len < 0)
+            {
+                throw result_len;
+            }
             write_to_solution(result, result_len);
         }
         else if (flag_m)
         {
             int result_len = gen_chain_word_unique(words, word_count, result);
+            if (result_len < 0)
+            {
+                throw result_len;
+            }
             write_to_solution(result, result_len);
         }
         else if (flag_c)
         {
             int result_len = gen_chain_char(words, word_count, result, param_h, param_t, flag_r);
+            if (result_len < 0)
+            {
+                throw result_len;
+            }
             write_to_solution(result, result_len);
         }
     }
