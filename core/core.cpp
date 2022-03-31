@@ -41,31 +41,31 @@ inline void build_graph(char* words[], const int word_count)
     }
 }
 
-bool check_cycle_dfs(const int current)
+bool check_cycle_dfs(const int now)
 {
-    status[current] = GRAY;
-    for (int next = 0; next < 26; next++)
+    status[now] = GRAY;
+    for (int target = 0; target < 26; target++)
     {
-        if (current == next)
+        if (now == target)
         {
             continue;
         }
-        if (!graph[current][next].empty())
+        if (!graph[now][target].empty())
         {
-            if (status[next] == GRAY)
+            if (status[target] == GRAY)
             {
                 return true;
             }
-            else if (status[next] == WHITE)
+            else if (status[target] == WHITE)
             {
-                if (check_cycle_dfs(next))
+                if (check_cycle_dfs(target))
                 {
                     return true;
                 }
             }
         }
     }
-    status[current] = BLACK;
+    status[now] = BLACK;
     return false;
 }
 
@@ -98,7 +98,7 @@ inline void output_chain(const Chain& chain, Chain chains[], int& count)
     }
 }
 
-inline void add_chain(const Chain& chain, Chain& max_chain, const bool by_word)
+inline void replace_max_chain(const Chain& chain, Chain& max_chain, const bool by_word)
 {
     if (chain.get_word_len() > 1)
     {
@@ -126,7 +126,7 @@ void gen_chain_dfs(const int now, Chain& chain, Chain& max_chain, const char end
             chain.push_back(&node);
             if (end < 'a' || end > 'z' || node.get_end() == end)
             {
-                add_chain(chain, max_chain, by_word);
+                replace_max_chain(chain, max_chain, by_word);
             }
             gen_chain_dfs(target, chain, max_chain, end, by_word);
             chain.pop_back();
@@ -209,12 +209,12 @@ void chain_word_unique_dfs(const int now, Chain& chain, Chain& max_chain)
         for (auto& node : nodes)
         {
             chain.push_back(&node);
-            add_chain(chain, max_chain, true);
+            replace_max_chain(chain, max_chain, true);
             chain_word_unique_dfs(target, chain, max_chain);
             if (graph[target][target].size() > 0)
             {
                 chain.push_back(&graph[target][target].front());
-                add_chain(chain, max_chain, true);
+                replace_max_chain(chain, max_chain, true);
                 chain.pop_back();
             }
             chain.pop_back();
