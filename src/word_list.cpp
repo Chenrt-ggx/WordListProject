@@ -2,6 +2,7 @@
 #include "errors.h"
 
 #include <cstdio>
+#include <cassert>
 #include <cstdlib>
 
 using namespace std;
@@ -182,7 +183,8 @@ int main(int argc, char* argv[])
             "input file modified when reading", // B
             "memory alloc failed", // C
         };
-        printf("expection (id 0x%X) catched: %s\n", eid, description[(eid & 0x7fffffff) - 1]);
+        int index = ((eid ^ 0x80000000) - 1) % (sizeof(description) / sizeof(char*));
+        printf("expection (id 0x%X) catched: %s\n", eid, description[index]);
     }
     if (content != nullptr)
     {

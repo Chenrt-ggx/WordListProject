@@ -4,8 +4,8 @@
 #include "chain.h"
 
 #include <vector>
-#include <cstring>
 #include <string>
+#include <cstring>
 #include <algorithm>
 
 using namespace std;
@@ -16,8 +16,8 @@ constexpr int BLACK = 2;
 
 int status[26];
 vector<Node> graph[26][26];
+int result_count;
 vector<string> result_storage;
-int result_count = 0;
 
 inline void build_graph(char* words[], const int word_count)
 {
@@ -251,7 +251,7 @@ int gen_chains_all(char* words[], int len, char* result[])
     }
     for (int i = 0; i < result_count; i++)
     {
-        result[i] = (char *)result_storage[i].c_str();
+        result[i] = (char*)result_storage[i].c_str();
     }
     return result_count;
 }
