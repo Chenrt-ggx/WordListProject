@@ -67,32 +67,24 @@ void parse_config(char* config[], const int config_len, Config& result)
     {
     case 'n':
         result.process_method = ALL;
+        result.check_method = BY_STRING;
         break;
     case 'm':
         result.process_method = UNIQUE;
+        result.check_method = BY_WORD_LEN;
         break;
     case 'w':
         result.process_method = config[0][1] == 'r' ? BY_WORD_ALLOW_R : BY_WORD;
+        result.check_method = BY_WORD_LEN;
         break;
     case 'c':
         result.process_method = config[0][1] == 'r' ? BY_CHAR_ALLOW_R : BY_CHAR;
+        result.check_method = BY_CHAR_LEN;
         break;
     }
     result.head = config[1][0];
     result.tail = config[2][0];
-    switch (config[3][0])
-    {
-    case 's':
-        result.check_method = BY_STRING;
-        break;
-    case 'w':
-        result.check_method = BY_WORD_LEN;
-        break;
-    case 'c':
-        result.check_method = BY_CHAR_LEN;
-        break;
-    }
-    assert(sscanf_s(config[4], "%d", &result.answer) == 1);
+    assert(sscanf_s(config[3], "%d", &result.answer) == 1);
 }
 
 inline void replace_all(char* data, const int data_len, const char src, const char dst)
@@ -111,7 +103,7 @@ inline bool array_unique_check(char* data[], const int data_len)
     unordered_set<char*> unique;
     for (int i = 0; i < data_len; i++)
     {
-        if (unique.find(data[i]) != unique.end())
+        if (unique.find(data[i]) == unique.end())
         {
             unique.insert(data[i]);
         }
@@ -131,7 +123,7 @@ inline bool string_unique_check(char data[], const int data_len)
     {
         if (data[i] == 0)
         {
-            if (unique.find(data + i + 1) != unique.end())
+            if (unique.find(data + i + 1) == unique.end())
             {
                 unique.insert(data + i + 1);
             }
@@ -182,7 +174,7 @@ inline bool string_list_check(char* data, const int data_len)
 
 inline bool array_in_input_check(char* data[], const int data_len, char* input[], const int input_len)
 {
-    unordered_set<char*> input_set;
+    unordered_set<string> input_set;
     for (int i = 0; i < input_len; i++)
     {
         input_set.insert(input[i]);
@@ -197,7 +189,7 @@ inline bool array_in_input_check(char* data[], const int data_len, char* input[]
     return true;
 }
 
-inline bool string_in_input_check(char* data, const int data_len, unordered_set<char*>& input)
+inline bool string_in_input_check(char* data, const int data_len, unordered_set<string>& input)
 {
     if (input.find(data) == input.end())
     {
@@ -261,7 +253,7 @@ bool string_check(char* result[], const int result_len, char* input[], const int
     {
         return true;
     }
-    unordered_set<char*> input_set;
+    unordered_set<string> input_set;
     for (int i = 0; i < input_len; i++)
     {
         input_set.insert(input[i]);
@@ -269,15 +261,15 @@ bool string_check(char* result[], const int result_len, char* input[], const int
     for (int i = 0; i < result_len; i++)
     {
         int len = (int)strlen(result[i]);
-        replace_all(result[i], ' ', '\0', len);
+        replace_all(result[i], len, ' ', '\0');
         if (!string_unique_check(result[i], len)
             || !string_list_check(result[i], len)
             || !string_in_input_check(result[i], len, input_set))
         {
-            replace_all(result[i], '\0', ' ', len);
+            replace_all(result[i], len, '\0', ' ');
             return false;
         }
-        replace_all(result[i], '\0', ' ', len);
+        replace_all(result[i], len, '\0', ' ');
     }
     return true;
 }
