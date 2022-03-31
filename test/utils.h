@@ -14,6 +14,7 @@ constexpr int BY_CHAR_ALLOW_R = 5;
 constexpr int BY_STRING = 0;
 constexpr int BY_WORD_LEN = 1;
 constexpr int BY_CHAR_LEN = 2;
+constexpr int HAS_ERROR = 3;
 
 struct Config
 {
@@ -22,7 +23,7 @@ struct Config
     int process_method, check_method;
 };
 
-bool check_testcase(const int index);
+void check_testcase(const int index);
 
 void read_by_line(const string name, char**& result, int& len);
 
@@ -30,8 +31,10 @@ void free_content(char* data[], const int data_len);
 
 void parse_config(char* config[], const int config_len, Config& result);
 
-bool array_check_word(char* result[], const int result_len, char* input[], const int input_len, const int answer);
+void array_check_word(char* result[], const int result_len, char* input[], const int input_len, const int answer);
 
-bool array_check_char(char* result[], const int result_len, char* input[], const int input_len, const int answer);
+void array_check_char(char* result[], const int result_len, char* input[], const int input_len, const int answer);
 
-bool string_check(char* result[], const int result_len, char* input[], const int input_len, const int answer);
+void string_check(char* result[], const int result_len, char* input[], const int input_len, const int answer);
+
+void error_code_check(const int result_len, const int answer);
