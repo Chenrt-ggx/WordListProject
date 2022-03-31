@@ -21,23 +21,21 @@ namespace test
 	TEST_CLASS(test)
 	{
 	public:
-		TEST_METHOD(TestMethod1)
+		TEST_METHOD(TestMethod)
 		{
 			int in_len;
-			int out_len;
 			int config_len;
 			char** in_content;
-			char** out_content;
 			char** config_content;
 			int result_len;
 			static char* result[20000];
-			for (int i = 0; check_testcase(i); i++)
+			for (int i = 0; check_testcase(i + 1); i++)
 			{
 				string base = "../cases/unit/testcase" + i;
 				read_by_line(base + ".in", in_content, in_len);
 				read_by_line(base + ".config", config_content, config_len);
 				Config config = parse_config(config_content, config_len);
-				switch (config.method)
+				switch (config.process_method)
 				{
 				case ALL:
 					result_len = gen_chains_all(in_content, in_len, result);
@@ -60,17 +58,22 @@ namespace test
 				default:
 					result_len = -1;
 				}
-				read_by_line(base + ".out", out_content, out_len);
-				if (config.sorted_check)
+				switch (config.check_method)
 				{
-					assert(sorted_compare(out_content, out_len, result, result_len));
+				case BY_STRING:
+					assert(string_check(result, result_len, in_content, in_len, config.answer));
+					break;
+				case BY_WORD_LEN:
+					assert(array_check_word(result, result_len, in_content, in_len, config.answer));
+					break;
+				case BY_CHAR_LEN:
+					assert(array_check_char(result, result_len, in_content, in_len, config.answer));
+					break;
 				}
-				else
-				{
-					assert(content_compare(out_content, out_len, result, result_len));
-				}
+				free_content(result, result_len);
+				free_content(in_content, in_len);
+				free_content(config_content, config_len);
 				delete in_content;
-				delete out_content;
 				delete config_content;
 			}
 		}
