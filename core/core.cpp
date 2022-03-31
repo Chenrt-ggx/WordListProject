@@ -89,18 +89,6 @@ bool check_cycle()
     return false;
 }
 
-inline void output_chain(const Chain& chain)
-{
-    if (chain.get_word_len() > 1)
-    {
-        if (result_count < MAX_RESULT_LENGTH)
-        {
-            result_storage.push_back(chain.to_string());
-        }
-        result_count++;
-    }
-}
-
 inline void replace_max_chain(const Chain& chain, Chain& max_chain, const bool by_word)
 {
     if (chain.get_word_len() > 1)
@@ -166,6 +154,28 @@ int abstract_gen_chain(char* words[], const int len, char* result[], const char 
     return max_chain.get_word_len();
 }
 
+int gen_chain_word(char* words[], int len, char* result[], char head, char tail, bool enable_loop)
+{
+    return abstract_gen_chain(words, len, result, head, tail, enable_loop, true);
+}
+
+int gen_chain_char(char* words[], int len, char* result[], char head, char tail, bool enable_loop)
+{
+    return abstract_gen_chain(words, len, result, head, tail, enable_loop, false);
+}
+
+inline void output_chain(const Chain& chain)
+{
+    if (chain.get_word_len() > 1)
+    {
+        if (result_count < MAX_RESULT_LENGTH)
+        {
+            result_storage.push_back(chain.to_string());
+        }
+        result_count++;
+    }
+}
+
 void chains_all_dfs(const int now, Chain& chain)
 {
     Node* self_circle = nullptr;
@@ -200,6 +210,31 @@ void chains_all_dfs(const int now, Chain& chain)
     }
 }
 
+int gen_chains_all(char* words[], int len, char* result[])
+{
+    build_graph(words, len);
+    result_storage.clear();
+    result_count = 0;
+    if (check_cycle())
+    {
+        return E_WORD_CYCLE_EXIST;
+    }
+    Chain chain;
+    for (int i = 0; i < 26; i++)
+    {
+        chains_all_dfs(i, chain);
+    }
+    if (result_count >= MAX_RESULT_LENGTH)
+    {
+        return result_count;
+    }
+    for (int i = 0; i < result_count; i++)
+    {
+        result[i] = (char*)result_storage[i].c_str();
+    }
+    return result_count;
+}
+
 void chain_word_unique_dfs(const int now, Chain& chain, Chain& max_chain)
 {
     for (int target = 0; target < 26; target++)
@@ -226,36 +261,6 @@ void chain_word_unique_dfs(const int now, Chain& chain, Chain& max_chain)
     }
 }
 
-int gen_chain_word(char* words[], int len, char* result[], char head, char tail, bool enable_loop)
-{
-    return abstract_gen_chain(words, len, result, head, tail, enable_loop, true);
-}
-
-int gen_chains_all(char* words[], int len, char* result[])
-{
-    build_graph(words, len);
-    result_storage.clear();
-    result_count = 0;
-    if (check_cycle())
-    {
-        return E_WORD_CYCLE_EXIST;
-    }
-    Chain chain;
-    for (int i = 0; i < 26; i++)
-    {
-        chains_all_dfs(i, chain);
-    }
-    if (result_count >= MAX_RESULT_LENGTH)
-    {
-        return result_count;
-    }
-    for (int i = 0; i < result_count; i++)
-    {
-        result[i] = (char*)result_storage[i].c_str();
-    }
-    return result_count;
-}
-
 int gen_chain_word_unique(char* words[], int len, char* result[])
 {
     build_graph(words, len);
@@ -273,9 +278,4 @@ int gen_chain_word_unique(char* words[], int len, char* result[])
         result[i] = max_chain.at(i);
     }
     return max_chain.get_word_len();
-}
-
-int gen_chain_char(char* words[], int len, char* result[], char head, char tail, bool enable_loop)
-{
-    return abstract_gen_chain(words, len, result, head, tail, enable_loop, false);
 }
