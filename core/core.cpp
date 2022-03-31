@@ -16,22 +16,15 @@ constexpr int BLACK = 2;
 static int status[26];
 static vector<Node> graph[26][26];
 
-inline void reset_graph()
+inline void build_graph(char* words[], const int word_count)
 {
     for (int i = 0; i < 26; i++)
     {
         for (int j = 0; j < 26; j++)
         {
-            for (Node& node : graph[i][j])
-            {
-                node.set_status(WHITE);
-            }
+            graph[i][j].clear();
         }
     }
-}
-
-void build_graph(char* words[], const int word_count, const bool enable_loop)
-{
     for (int i = 0; i < word_count; i++)
     {
         char* word = words[i];
@@ -43,10 +36,7 @@ void build_graph(char* words[], const int word_count, const bool enable_loop)
         for (int j = 0; j < 26; j++)
         {
             sort(graph[i][j].begin(), graph[i][j].end());
-            if (enable_loop)
-            {
-                graph[i][j].erase(unique(graph[i][j].begin(), graph[i][j].end()), graph[i][j].end());
-            }
+            graph[i][j].erase(unique(graph[i][j].begin(), graph[i][j].end()), graph[i][j].end());
         }
     }
 }
@@ -81,7 +71,7 @@ bool check_cycle_dfs(const int parent)
 
 bool check_cycle()
 {
-    memset(status, 0, sizeof(status));
+    memset(status, WHITE, sizeof(status));
     for (int i = 0; i < 26; i++)
     {
         if (status[i] == WHITE && check_cycle_dfs(i))
@@ -149,7 +139,7 @@ void gen_chain_dfs(const int now, Chain& chain, Chain& max_chain, const char end
 int abstract_gen_chain(char* words[], const int len, char* result[], const char head, const char tail
     , const bool enable_loop, const bool by_word)
 {
-    build_graph(words, len, enable_loop);
+    build_graph(words, len);
     if (!enable_loop && check_cycle())
     {
         return E_WORD_CYCLE_EXIST;
@@ -170,7 +160,7 @@ int abstract_gen_chain(char* words[], const int len, char* result[], const char 
     {
         result[i] = max_chain.at(i);
     }
-    return (int)max_chain.get_word_len();
+    return max_chain.get_word_len();
 }
 
 void chains_all_dfs(const int now, Chain& chain, Chain chains[], int& count)
@@ -240,7 +230,7 @@ int gen_chain_word(char* words[], int len, char* result[], char head, char tail,
 
 int gen_chains_all(char* words[], int len, char* result[])
 {
-    build_graph(words, len, false);
+    build_graph(words, len);
     if (check_cycle())
     {
         return E_WORD_CYCLE_EXIST;
@@ -265,7 +255,7 @@ int gen_chains_all(char* words[], int len, char* result[])
 
 int gen_chain_word_unique(char* words[], int len, char* result[])
 {
-    build_graph(words, len, false);
+    build_graph(words, len);
     if (check_cycle())
     {
         return E_WORD_CYCLE_EXIST;
@@ -279,7 +269,7 @@ int gen_chain_word_unique(char* words[], int len, char* result[])
     {
         result[i] = max_chain.at(i);
     }
-    return (int)max_chain.get_word_len();
+    return max_chain.get_word_len();
 }
 
 int gen_chain_char(char* words[], int len, char* result[], char head, char tail, bool enable_loop)
