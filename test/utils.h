@@ -17,9 +17,9 @@ constexpr int BY_CHAR_LEN = 2;
 
 struct Config
 {
-	int answer;
-	char head, tail;
-	int process_method, check_method;
+    int answer;
+    char head, tail;
+    int process_method, check_method;
 };
 
 bool check_testcase(const int index);
@@ -28,7 +28,7 @@ void read_by_line(const string name, char**& result, int& len);
 
 void free_content(char* data[], const int data_len);
 
-Config parse_config(char* config[], const int config_len);
+void parse_config(char* config[], const int config_len, Config& result);
 
 bool array_check_word(char* result[], const int result_len, char* input[], const int input_len, const int answer);
 

@@ -2,6 +2,7 @@
 #include "errors.h"
 
 #include <cstdio>
+#include <cstdlib>
 
 using namespace std;
 
@@ -117,12 +118,12 @@ void conflict_check()
 
 int main(int argc, char* argv[])
 {
+    int len;
+    char* content = nullptr;
+    static char* words[10005];
+    static char* result[20005];
     try
     {
-        int len;
-        char* content;
-        static char* words[10005];
-        static char* result[20005];
         parse_params(argc, argv);
         conflict_check();
         read_file(filename, content, len);
@@ -166,6 +167,10 @@ int main(int argc, char* argv[])
             "memory alloc failed", // C
         };
         printf("expection (id 0x%X) catched: %s\n", eid, description[(eid & 0x7fffffff) - 1]);
+    }
+    if (content != nullptr)
+    {
+        free(content);
     }
     return 0;
 }
