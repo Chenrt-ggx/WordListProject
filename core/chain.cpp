@@ -33,7 +33,7 @@ void Chain::pop_back()
     word_vector.pop_back();
 }
 
-char* Chain::to_string() const
+string Chain::to_string() const
 {
     string str;
     for (auto& i : word_vector)
@@ -41,8 +41,6 @@ char* Chain::to_string() const
         str += i->get_word();
         str += " ";
     }
-    char* result = (char*)malloc(str.length() + 1);
-    assert(result != nullptr);
-    strcpy_s(result, str.length() + 1, str.c_str());
-    return result;
+    str.pop_back();
+    return str;
 }

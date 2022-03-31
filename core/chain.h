@@ -3,6 +3,7 @@
 #include "node.h"
 
 #include <vector>
+#include <string>
 
 using namespace std;
 
@@ -25,5 +26,5 @@ public:
 
     void pop_back();
 
-    char* to_string() const;
+    string to_string() const;
 };
