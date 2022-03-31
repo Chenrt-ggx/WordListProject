@@ -34,7 +34,7 @@ def generate_no_cycle(length):
         a = random.randint(0, 24)
         b = random.randint(a + 1, 25)
         if a != b:
-            arrow[a][b] = weight_gen()
+            arrow[a][b] += weight_gen()
     return arrow
 
 
@@ -44,7 +44,7 @@ def generate_has_cycle(length):
         a = random.randint(0, 25)
         b = random.randint(0, 25)
         if a != b:
-            arrow[a][b] = weight_gen()
+            arrow[a][b] += weight_gen()
     return arrow
 
 
@@ -98,6 +98,8 @@ def generate(length, no_same, self_cycle_max, no_cycle, confuse):
         for j, v in enumerate(row):
             if v > 0:
                 result += generate_word(alphabet[i], alphabet[j], v, no_same)
+
+    result = random.sample(result, length)
 
     if confuse:
         return confuse_join(result)
