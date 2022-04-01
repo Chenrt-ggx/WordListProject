@@ -3,6 +3,7 @@
 #include "CppUnitTest.h"
 
 #include <io.h>
+#include <cctype>
 #include <string>
 #include <vector>
 #include <fstream>
@@ -56,24 +57,25 @@ void free_content(char* data[], const int data_len)
 
 void parse_config(char* config[], const int config_len, Config& result)
 {
-    switch (config[0][0])
+    if (config[0][0] == 'n')
     {
-    case 'n':
         result.process_method = ALL;
         result.check_method = BY_STRING;
-        break;
-    case 'm':
+    }
+    else if (config[0][0] == 'm')
+    {
         result.process_method = UNIQUE;
-        result.check_method = BY_WORD_LEN;
-        break;
-    case 'w':
+        result.check_method = BY_UNIQUE;
+    }
+    else if (config[0][0] == 'w')
+    {
         result.process_method = config[0][1] == 'r' ? BY_WORD_ALLOW_R : BY_WORD;
         result.check_method = BY_WORD_LEN;
-        break;
-    case 'c':
+    }
+    else if (config[0][0] == 'c')
+    {
         result.process_method = config[0][1] == 'r' ? BY_CHAR_ALLOW_R : BY_CHAR;
         result.check_method = BY_CHAR_LEN;
-        break;
     }
     result.head = config[1][0];
     result.tail = config[2][0];
@@ -88,6 +90,28 @@ inline void replace_all(char* data, const int data_len, const char src, const ch
         {
             data[i] = dst;
         }
+    }
+}
+
+inline void head_unique_check(char* data[], const int data_len)
+{
+    bool vis[26] = { false };
+    for (int i = 0; i < data_len; i++)
+    {
+        Assert::IsFalse(vis[data[i][0] - 'a']);
+        vis[data[i][0] - 'a'] = true;
+    }
+}
+
+inline void head_tail_check(char* result[], const int result_len, const Config& config)
+{
+    if (isalpha(config.head))
+    {
+        Assert::AreEqual(result[0][0], config.head);
+    }
+    if (isalpha(config.tail))
+    {
+        Assert::AreEqual(result[result_len - 1][strlen(result[result_len - 1]) - 1], config.tail);
     }
 }
 
@@ -117,24 +141,27 @@ inline void string_unique_check(char data[], const int data_len)
 
 inline void array_list_check(char* data[], const int data_len)
 {
-    Assert::IsTrue(strlen(data[0]) >= 2);
+    Assert::AreNotEqual(data[0][0], '\0');
+    Assert::AreNotEqual(data[0][1], '\0');
     for (int i = 1; i < data_len; i++)
     {
-        int len = (int)strlen(data[i - 1]);
-        Assert::IsTrue(len >= 2);
-        Assert::AreEqual(data[i - 1][len - 1], data[i][0]);
+        Assert::AreNotEqual(data[i][0], '\0');
+        Assert::AreNotEqual(data[i][1], '\0');
+        Assert::AreEqual(data[i - 1][strlen(data[i - 1]) - 1], data[i][0]);
     }
 }
 
 inline void string_list_check(char* data, const int data_len)
 {
-    Assert::IsTrue(strlen(data) >= 2);
+    Assert::AreNotEqual(data[0], '\0');
+    Assert::AreNotEqual(data[1], '\0');
     for (int i = 0; i < data_len; i++)
     {
         if (data[i] == 0)
         {
-            Assert::IsTrue(strlen(data + i + 1) >= 2);
-            Assert::AreEqual(data[i + 1], data[i - 1]);
+            Assert::AreNotEqual(data[i + 1], '\0');
+            Assert::AreNotEqual(data[i + 2], '\0');
+            Assert::AreEqual(data[i - 1], data[i + 1]);
         }
     }
 }
@@ -164,36 +191,50 @@ inline void string_in_input_check(char* data, const int data_len, unordered_set<
     }
 }
 
-void array_check_word(char* result[], const int result_len, char* input[], const int input_len, const int answer)
+void array_check_word(char* result[], const int result_len, char* input[], const int input_len, const Config& config)
 {
-    Assert::AreEqual(result_len, answer);
+    Assert::AreEqual(result_len, config.answer);
     if (result_len != 0)
     {
         array_unique_check(result, result_len);
         array_list_check(result, result_len);
+        head_tail_check(result, result_len, config);
         array_in_input_check(result, result_len, input, input_len);
     }
 }
 
-void array_check_char(char* result[], const int result_len, char* input[], const int input_len, const int answer)
+void array_check_char(char* result[], const int result_len, char* input[], const int input_len, const Config& config)
 {
     int char_len = 0;
     for (int i = 0; i < result_len; i++)
     {
         char_len += (int)strlen(result[i]);
     }
-    Assert::AreEqual(char_len, answer);
+    Assert::AreEqual(char_len, config.answer);
+    if (result_len != 0)
+    {
+        array_unique_check(result, result_len);
+        array_list_check(result, result_len);
+        head_tail_check(result, result_len, config);
+        array_in_input_check(result, result_len, input, input_len);
+    }
+}
+
+void unique_check(char* result[], const int result_len, char* input[], const int input_len, const Config& config)
+{
+    Assert::AreEqual(result_len, config.answer);
     if (result_len != 0)
     {
         array_unique_check(result, result_len);
         array_list_check(result, result_len);
         array_in_input_check(result, result_len, input, input_len);
+        head_unique_check(result, result_len);
     }
 }
 
-void string_check(char* result[], const int result_len, char* input[], const int input_len, const int answer)
+void string_check(char* result[], const int result_len, char* input[], const int input_len, const Config& config)
 {
-    Assert::AreEqual(result_len, answer);
+    Assert::AreEqual(result_len, config.answer);
     if (result_len != 0)
     {
         unordered_set<string> input_set;
@@ -213,7 +254,7 @@ void string_check(char* result[], const int result_len, char* input[], const int
     }
 }
 
-void error_code_check(const int result_len, const int answer)
+void error_code_check(const int result_len, const Config& config)
 {
-    Assert::AreEqual((int)(result_len ^ 0x80000000), answer);
+    Assert::AreEqual((int)(result_len ^ 0x80000000), config.answer);
 }

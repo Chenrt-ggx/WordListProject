@@ -55,22 +55,23 @@ namespace test
             }
             if (result_len < 0)
             {
-                config.check_method = HAS_ERROR;
+                error_code_check(result_len, config);
             }
-            switch (config.check_method)
+            else if (config.check_method == BY_STRING)
             {
-            case BY_STRING:
-                string_check(result, result_len, in_content, in_len, config.answer);
-                break;
-            case BY_WORD_LEN:
-                array_check_word(result, result_len, in_content, in_len, config.answer);
-                break;
-            case BY_CHAR_LEN:
-                array_check_char(result, result_len, in_content, in_len, config.answer);
-                break;
-            case HAS_ERROR:
-                error_code_check(result_len, config.answer);
-                break;
+                string_check(result, result_len, in_content, in_len, config);
+            }
+            else if (config.check_method == BY_UNIQUE)
+            {
+                unique_check(result, result_len, in_content, in_len, config);
+            }
+            else if (config.check_method == BY_WORD_LEN)
+            {
+                array_check_word(result, result_len, in_content, in_len, config);
+            }
+            else if (config.check_method == BY_CHAR_LEN)
+            {
+                array_check_char(result, result_len, in_content, in_len, config);
             }
             free_content(in_content, in_len);
             free_content(config_content, config_len);
@@ -114,6 +115,21 @@ namespace test
         TEST_METHOD(ByWordCycle)
         {
             do_test_at(14);
+        }
+
+        TEST_METHOD(ByWordSetHead)
+        {
+            do_test_at(17);
+        }
+
+        TEST_METHOD(ByWordSetTail)
+        {
+            do_test_at(18);
+        }
+
+        TEST_METHOD(ByWordSetBoth)
+        {
+            do_test_at(19);
         }
 
         // -------------------------------------------------------------
