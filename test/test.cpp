@@ -101,6 +101,7 @@ namespace test
         TEST_METHOD(UniqueChainEmpty) { do_test_at(9); }
         TEST_METHOD(UniqueChainCycle) { do_test_at(15); }
         TEST_METHOD(UniqueChainAddition) { do_test_at(31); }
+        TEST_METHOD(TestPerformance) { do_test_at(32); }
 
         // -------------------------------------------------------------
 
