@@ -16,7 +16,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 void check_testcase(const int index)
 {
-    string base = "../../cases/unit/testcase" + to_string(index);
+    string base = "../../cases/normal/testcase" + to_string(index);
     Assert::AreEqual(_access((base + ".in").c_str(), 0), 0);
     Assert::AreEqual(_access((base + ".config").c_str(), 0), 0);
 }

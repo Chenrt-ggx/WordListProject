@@ -28,7 +28,7 @@ namespace test
         {
             static char* result[20000];
             check_testcase(index);
-            string base = "../../cases/unit/testcase" + to_string(index);
+            string base = "../../cases/normal/testcase" + to_string(index);
             read_by_line(base + ".in", in_content, in_len);
             read_by_line(base + ".config", config_content, config_len);
             parse_config(config_content, config_len, config);
@@ -107,15 +107,24 @@ namespace test
         TEST_METHOD(ByCharNormal) { do_test_at(4); }
         TEST_METHOD(ByCharEmpty) { do_test_at(10); }
         TEST_METHOD(ByCharCycle) { do_test_at(16); }
+        TEST_METHOD(ByCharSetHead) { do_test_at(20); }
+        TEST_METHOD(ByCharSetTail) { do_test_at(21); }
+        TEST_METHOD(ByCharSetBoth) { do_test_at(22); }
 
         // -------------------------------------------------------------
 
         TEST_METHOD(ByWordAllowRNormal) { do_test_at(5); }
         TEST_METHOD(ByWordAllowREmpty) { do_test_at(11); }
+        TEST_METHOD(ByWordAllowRSetHead) { do_test_at(23); }
+        TEST_METHOD(ByWordAllowRSetTail) { do_test_at(24); }
+        TEST_METHOD(ByWordAllowRSetBoth) { do_test_at(25); }
 
         // -------------------------------------------------------------
 
         TEST_METHOD(ByCharAllowRNormal) { do_test_at(6); }
         TEST_METHOD(ByCharAllowREmpty) { do_test_at(12); }
+        TEST_METHOD(ByCharAllowRSetHead) { do_test_at(26); }
+        TEST_METHOD(ByCharAllowRSetTail) { do_test_at(27); }
+        TEST_METHOD(ByCharAllowRSetBoth) { do_test_at(28); }
     };
 }
