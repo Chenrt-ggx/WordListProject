@@ -80,119 +80,42 @@ namespace test
         }
 
     public:
-        TEST_METHOD(AllChainNormal)
-        {
-            do_test_at(1);
-        }
-
-        TEST_METHOD(AllChainEmpty)
-        {
-            do_test_at(7);
-        }
-
-        TEST_METHOD(AllChainCycle)
-        {
-            do_test_at(13);
-        }
-
-        TEST_METHOD(AllChainAddition)
-        {
-            do_test_at(29);
-        }
+        TEST_METHOD(AllChainNormal) { do_test_at(1); }
+        TEST_METHOD(AllChainEmpty) { do_test_at(7); }
+        TEST_METHOD(AllChainCycle) { do_test_at(13); }
+        TEST_METHOD(AllChainAddition) { do_test_at(29); }
+        TEST_METHOD(AllChainExceed) { do_test_at(30); }
 
         // -------------------------------------------------------------
 
-        TEST_METHOD(ByWordNormal)
-        {
-            do_test_at(2);
-        }
-
-        TEST_METHOD(ByWordEmpty)
-        {
-            do_test_at(8);
-        }
-
-        TEST_METHOD(ByWordCycle)
-        {
-            do_test_at(14);
-        }
-
-        TEST_METHOD(ByWordSetHead)
-        {
-            do_test_at(17);
-        }
-
-        TEST_METHOD(ByWordSetTail)
-        {
-            do_test_at(18);
-        }
-
-        TEST_METHOD(ByWordSetBoth)
-        {
-            do_test_at(19);
-        }
+        TEST_METHOD(ByWordNormal) { do_test_at(2); }
+        TEST_METHOD(ByWordEmpty) { do_test_at(8); }
+        TEST_METHOD(ByWordCycle) { do_test_at(14); }
+        TEST_METHOD(ByWordSetHead) { do_test_at(17); }
+        TEST_METHOD(ByWordSetTail) { do_test_at(18); }
+        TEST_METHOD(ByWordSetBoth) { do_test_at(19); }
 
         // -------------------------------------------------------------
 
-        TEST_METHOD(UniqueChainNormal)
-        {
-            do_test_at(3);
-        }
-
-        TEST_METHOD(UniqueChainEmpty)
-        {
-            do_test_at(9);
-        }
-
-        TEST_METHOD(UniqueCycle)
-        {
-            do_test_at(15);
-        }
-
-        TEST_METHOD(UniqueCycleAddition)
-        {
-            do_test_at(30);
-        }
+        TEST_METHOD(UniqueChainNormal) { do_test_at(3); }
+        TEST_METHOD(UniqueChainEmpty) { do_test_at(9); }
+        TEST_METHOD(UniqueChainCycle) { do_test_at(15); }
+        TEST_METHOD(UniqueChainAddition) { do_test_at(31); }
 
         // -------------------------------------------------------------
 
-        TEST_METHOD(ByCharNormal)
-        {
-            do_test_at(4);
-        }
-
-        TEST_METHOD(ByCharEmpty)
-        {
-            do_test_at(10);
-        }
-
-        TEST_METHOD(ByCharCycle)
-        {
-            do_test_at(16);
-        }
+        TEST_METHOD(ByCharNormal) { do_test_at(4); }
+        TEST_METHOD(ByCharEmpty) { do_test_at(10); }
+        TEST_METHOD(ByCharCycle) { do_test_at(16); }
 
         // -------------------------------------------------------------
 
-        TEST_METHOD(ByWordAllowCycleNormal)
-        {
-            do_test_at(5);
-        }
-
-        TEST_METHOD(ByWordAllowCycleEmpty)
-        {
-            do_test_at(11);
-        }
+        TEST_METHOD(ByWordAllowRNormal) { do_test_at(5); }
+        TEST_METHOD(ByWordAllowREmpty) { do_test_at(11); }
 
         // -------------------------------------------------------------
 
-        TEST_METHOD(ByCharAllowCycleNormal)
-        {
-            do_test_at(6);
-        }
-
-        TEST_METHOD(ByCharAllowCycleEmpty)
-        {
-            do_test_at(12);
-        }
+        TEST_METHOD(ByCharAllowRNormal) { do_test_at(6); }
+        TEST_METHOD(ByCharAllowREmpty) { do_test_at(12); }
     };
 }

@@ -94,9 +94,16 @@ int split_content(char* content, const int len, char* result[])
 void write_to_screen(char* result[], const int len)
 {
     printf("%d\n", len);
-    for (int i = 0; i < len; i++)
+    if (len <= 20000)
     {
-        puts(result[i]);
+        for (int i = 0; i < len; i++)
+        {
+            puts(result[i]);
+        }
+    }
+    else
+    {
+        puts("output terminated: buffer length 20000 exceed");
     }
 }
 
@@ -108,9 +115,17 @@ void write_to_solution(char* result[], const int len)
         throw E_FILE_UNABLE_TO_OPEN;
     }
     fprintf(file, "%d\n", len);
-    for (int i = 0; i < len; i++)
+    if (len <= 20000)
     {
-        fputs(result[i], file);
+        for (int i = 0; i < len; i++)
+        {
+            fputs(result[i], file);
+            fputc('\n', file);
+        }
+    }
+    else
+    {
+        fputs("output terminated: buffer length 20000 exceed", file);
         fputc('\n', file);
     }
     fclose(file);

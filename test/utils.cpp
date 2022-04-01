@@ -235,7 +235,7 @@ void unique_check(char* result[], const int result_len, char* input[], const int
 void string_check(char* result[], const int result_len, char* input[], const int input_len, const Config& config)
 {
     Assert::AreEqual(result_len, config.answer);
-    if (result_len != 0)
+    if (result_len != 0 && result_len <= 20000)
     {
         unordered_set<string> input_set;
         for (int i = 0; i < input_len; i++)
