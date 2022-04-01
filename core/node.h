@@ -22,8 +22,4 @@ public:
     void set_status(const int status);
 
     bool operator==(const Node& rhs) const;
-
-    bool operator>(const Node& rhs) const;
-
-    bool operator<(const Node& rhs) const;
 };

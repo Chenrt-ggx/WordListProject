@@ -32,16 +32,3 @@ bool Node::operator==(const Node& rhs) const
 {
     return strcmp(this->word, rhs.word) == 0;
 }
-
-bool Node::operator<(const Node& rhs) const
-{
-    if (this->len > rhs.len)
-    {
-        return true;
-    }
-    if (this->len < rhs.len)
-    {
-        return false;
-    }
-    return strcmp(this->word, rhs.word) > 0;
-}

@@ -38,7 +38,18 @@ inline void build_graph(char* words[], const int word_count)
     {
         for (int j = 0; j < 26; j++)
         {
-            sort(graph[i][j].begin(), graph[i][j].end());
+            sort(graph[i][j].begin(), graph[i][j].end(), [=](const Node& lhs, const Node& rhs)
+            {
+                if (lhs.get_len() > rhs.get_len())
+                {
+                    return true;
+                }
+                if (lhs.get_len() < rhs.get_len())
+                {
+                    return false;
+                }
+                return strcmp(lhs.get_word(), rhs.get_word()) > 0;
+            });
             graph[i][j].erase(unique(graph[i][j].begin(), graph[i][j].end()), graph[i][j].end());
         }
     }
