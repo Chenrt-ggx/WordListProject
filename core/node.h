@@ -4,16 +4,13 @@ class Node
 {
 private:
     int len;
-    int end;
     int status;
     char* word;
 
 public:
-    Node(int len, char* word) : len(len), word(word), status(0), end(word[len - 1]) {}
+    Node(int len, char* word) : len(len), word(word), status(0) {}
 
     int get_len() const;
-
-    int get_end() const;
 
     char* get_word() const;
 

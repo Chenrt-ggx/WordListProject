@@ -8,11 +8,6 @@ int Node::get_len() const
     return len;
 }
 
-int Node::get_end() const
-{
-    return end;
-}
-
 char* Node::get_word() const
 {
     return word;

@@ -128,7 +128,7 @@ void gen_chain_dfs(const int now, Chain& chain, Chain& max_chain, const char end
             }
             node.set_status(1);
             chain.push_back(&node);
-            if (end < 'a' || end > 'z' || node.get_end() == end)
+            if (end < 'a' || end > 'z' || target + 'a' == end)
             {
                 replace_max_chain(chain, max_chain, by_word);
             }
