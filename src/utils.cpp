@@ -114,7 +114,6 @@ void write_to_solution(char* result[], const int len)
     {
         throw E_FILE_UNABLE_TO_OPEN;
     }
-    fprintf(file, "%d\n", len);
     if (len <= 20000)
     {
         for (int i = 0; i < len; i++)
