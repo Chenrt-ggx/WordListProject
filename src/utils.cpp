@@ -65,15 +65,16 @@ void read_file(const char* filename, char*& content, int& len)
 
 int split_content(char* content, const int len, char* result[])
 {
-    for (char* c = content; *c != '\0'; c++)
+    for (int i = 0; i < len; i++)
     {
-        if ('A' <= *c && *c <= 'Z')
+        char c = content[i];
+        if ('A' <= c && c <= 'Z')
         {
-            *c = *c + 32;
+            content[i] = c + 32;
         }
-        else if (*c < 'a' || *c > 'z')
+        else if (c < 'a' || c > 'z')
         {
-            *c = '\0';
+            content[i] = '\0';
         }
     }
     int count = 0;
