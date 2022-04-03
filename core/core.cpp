@@ -113,10 +113,38 @@ inline void replace_max_chain(const Chain& chain, Chain& max_chain, const bool b
     }
 }
 
+/*
+// 性能优化前的 gen_chain_dfs 实现
+void gen_chain_dfs(const int now, Chain& chain, Chain& max_chain, const char end, const bool by_word)
+{
+    for (int target = 0; target < 26; target++)
+    {
+        vector<Node>& nodes = graph[now][target];
+        for (auto& node : nodes)
+        {
+            if (node.get_status())
+            {
+                continue;
+            }
+            node.set_status(1);
+            chain.push_back(&node);
+            if (end < 'a' || end > 'z' || node.get_end() == end)
+            {
+                replace_max_chain(chain, max_chain, by_word);
+            }
+            gen_chain_dfs(target, chain, max_chain, end, by_word);
+            chain.pop_back();
+            node.set_status(0);
+            break;
+        }
+    }
+}
+*/
+
 void gen_chain_dfs(const int now, Chain& chain, Chain& max_chain, const char end, const bool by_word)
 {
     vector<Node>& self_nodes = graph[now][now];
-    bool first_met = 0;
+    bool first_met = false;
     for (auto& node : self_nodes)
     {
         // 到达一个点之初，压入所有自环，然后再输出（否则显然更短）
@@ -156,7 +184,8 @@ void gen_chain_dfs(const int now, Chain& chain, Chain& max_chain, const char end
             break; // 只走当前可走的最长边
         }
     }
-    if (first_met) {
+    if (first_met)
+    {
         for (auto& node : self_nodes)
         {
             chain.pop_back();
