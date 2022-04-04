@@ -10,18 +10,47 @@
 #include <cstring>
 #include <unordered_set>
 
+#include <cassert>
+
 using namespace std;
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-void check_testcase(const int index)
+void check_testcase(const int index, const string& folder)
 {
-    string base = "../../cases/normal/testcase" + to_string(index);
+    string base = "../../cases/" + folder + "/testcase" + to_string(index);
     Assert::AreEqual(_access((base + ".in").c_str(), 0), 0);
     Assert::AreEqual(_access((base + ".config").c_str(), 0), 0);
 }
 
-void read_by_line(const string name, char**& result, int& len)
+void create_temp_file(const string& name, char* data[], const int data_len)
+{
+    FILE* file;
+    Assert::AreEqual(fopen_s(&file, name.c_str(), "w"), 0);
+    Assert::IsNotNull(file);
+    if (file != nullptr)
+    {
+        for (int i = 0; i < data_len; i++)
+        {
+            fputs(data[i], file);
+            fputc('\n', file);
+        }
+        fclose(file);
+    }
+    string cmd = "mkdir dir_" + name;
+    system(cmd.c_str());
+}
+
+void remove_temp_file(const string& name)
+{
+    system("rm solution.txt");
+    string cmd = "rm " + name;
+    system(cmd.c_str());
+    cmd = "rm -rf dir_" + name;
+    system(cmd.c_str());
+}
+
+void read_by_line(const string& name, char**& result, int& len)
 {
     vector<char*> buffer;
     ifstream ifile(name.c_str());
@@ -256,5 +285,13 @@ void string_check(char* result[], const int result_len, char* input[], const int
 
 void error_code_check(const int result_len, const Config& config)
 {
-    Assert::AreEqual((int)(result_len ^ 0x80000000), config.answer);
+    Assert::AreEqual(result_len | 0x80000000, config.answer | 0x80000000);
+}
+
+void cli_parse_check(const int result, char* data[], const int data_len)
+{
+    int code;
+    Assert::AreEqual(data_len, 1);
+    Assert::AreEqual(sscanf_s(data[0], "%d", &code), 1);
+    Assert::AreEqual(result | 0x80000000, code | 0x80000000);
 }

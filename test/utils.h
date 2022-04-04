@@ -24,9 +24,13 @@ struct Config
     int process_method, check_method;
 };
 
-void check_testcase(const int index);
+void check_testcase(const int index, const string& folder);
 
-void read_by_line(const string name, char**& result, int& len);
+void create_temp_file(const string& name, char* data[], const int data_len);
+
+void remove_temp_file(const string& name);
+
+void read_by_line(const string& name, char**& result, int& len);
 
 void free_content(char* data[], const int data_len);
 
@@ -41,3 +45,5 @@ void unique_check(char* result[], const int result_len, char* input[], const int
 void string_check(char* result[], const int result_len, char* input[], const int input_len, const Config& config);
 
 void error_code_check(const int result_len, const Config& config);
+
+void cli_parse_check(const int result, char* data[], const int data_len);

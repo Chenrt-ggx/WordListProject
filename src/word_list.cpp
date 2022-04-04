@@ -7,7 +7,11 @@
 
 using namespace std;
 
-#pragma comment(lib, "../x64/Debug/core.lib")
+#ifdef _DEBUG
+    #pragma comment(lib, "../x64/Debug/core.lib")
+#else
+    #pragma comment(lib, "../x64/Release/core.lib")
+#endif
 
 extern "C" _declspec(dllimport) int gen_chain_word(char* words[], int len, char* result[], char head, char tail, bool enable_loop);
 
@@ -120,6 +124,7 @@ void conflict_check()
 int main(int argc, char* argv[])
 {
     int len;
+    int return_value = 0;
     char* content = nullptr;
     static char* words[10005];
     static char* result[20005];
@@ -185,10 +190,11 @@ int main(int argc, char* argv[])
         };
         int index = ((eid ^ 0x80000000) - 1) % (sizeof(description) / sizeof(char*));
         printf("expection (id 0x%X) catched: %s\n", eid, description[index]);
+        return_value = eid;
     }
     if (content != nullptr)
     {
         free(content);
     }
-    return 0;
+    return return_value;
 }
