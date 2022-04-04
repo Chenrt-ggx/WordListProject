@@ -249,6 +249,9 @@ void chains_all_dfs(const int now, Chain& chain)
     if (graph[now][now].size() == 1)
     {
         self_circle = &graph[now][now].at(0);
+        chain.push_back(self_circle);
+        output_chain(chain);
+        chain.pop_back();
     }
     for (int target = 0; target < 26; target++)
     {
@@ -266,7 +269,6 @@ void chains_all_dfs(const int now, Chain& chain)
             if (self_circle != nullptr)
             {
                 chain.push_back(self_circle);
-                output_chain(chain);
                 chain.push_back(&node);
                 output_chain(chain);
                 chains_all_dfs(target, chain);
